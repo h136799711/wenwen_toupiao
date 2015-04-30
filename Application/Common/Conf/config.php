@@ -40,7 +40,7 @@ return array(
     'LOG_TYPE'              =>  'Db',
 	'LOG_LEVEL'  =>'EMERG,ALERT,CRIT,ERR', // 只记录EMERG ALERT CRIT ERR 错误
     'LOG_DB_CONFIG'=>array(
-		'dsn'=>'mysql://boye:bo-ye2015BO-YE@rdsrrbifmrrbifm.mysql.rds.aliyuncs.com:3306/db_2015wytch' //本地日志数据库
+		'dsn'=>'mysql://boye:bo-ye2015BO-YE@rdsrrbifmrrbifm.mysql.rds.aliyuncs.com:3306/wenwen_toupiao' //本地日志数据库
 	),
     // Session 配置
     'SESSION_PREFIX' => 'oauth_',

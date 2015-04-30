@@ -1,0 +1,58 @@
+<extend name="template/base_index2" />
+
+<block name="area_header">
+	<!--顶部区域 -->
+	<style type="text/css">
+		.vote-page{
+			font-size:0.8rem;
+			padding: 10px;
+		}
+		.vote-page .vote{
+			padding: 10px;
+		}
+		.vote-page .vote-item {
+			padding: 10px;
+			border-bottom: 1px solid #E7CAD5;
+		}
+		.vote-page .vote-item .vote-img{
+			width:75px;
+			height: 75px;
+		}
+		.vote-page .vote{
+			background: #FFFFFF;
+			border: 1px solid #E7CAD5;
+			border-radius:5px;
+		}
+	</style>
+</block>
+
+<block name="area_body">
+	<div class="vote-page"> 
+			<div class="vote">
+				<div class="group-name">1. 最佳新人 </div>
+				<div class="vote-item">
+					<img  src="__IMG__/banner12.jpg"  class="vote-img"/>
+					
+				</div>
+				<div class="vote-item">
+					<img  src="__IMG__/banner12.jpg"  class="vote-img"/>
+				</div>
+				<div class="vote-item">
+					<img  src="__IMG__/banner12.jpg"  class="vote-img"/>
+				</div>
+			</div>
+	</div>
+	<div class="vote-page"> 
+		<volist name="groups"  id="vo">
+			<div class="group-name">{$vo.name}</div>
+			<volist name="vo.votes"  id="vote">
+				<div class="vote-item">
+					
+				</div>
+			</volist>
+		</volist>
+	</div>
+</block>
+<block name="area_footer">
+
+</block>
