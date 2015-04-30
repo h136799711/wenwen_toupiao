@@ -33,8 +33,38 @@ class VoteController extends WeixinController{
 		$this->display();	
 	}
 	
-	
-	
+	/**
+	 * 添加投票结果
+	 */
+	public function addRresult(){
+		if(IS_POST){
+			$wxuser_id = $this->userinfo['id'];
+			$option_id = I('post.option_id',0,'intval');
+			$vote_id = I('post.vote_id',0,'intval');
+			if($option_id == 0 || $vote_id == 0){
+				$this->error("操场失败！");
+			}
+			
+			$entity = array(
+				'wxuser_id'=>$wxuser_id,
+				'option_id'=>$option_id,
+				'vote_id'=>$vote_id,
+			);
+			//TODO: 判断用户 投了几票 ，做限制
+			
+			$result = apiCall("Weixin/VoteOptionResult/add",array($entity));
+			
+			
+			if(!$result['status']){
+				$this->error($result['info']);
+			}
+			
+			$this->success($result['info']);
+		}else{
+			$this->error("禁止访问！");
+		}
+		
+	}
 	
 	//===PRIVATE======
 		

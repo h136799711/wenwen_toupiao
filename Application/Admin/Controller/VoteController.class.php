@@ -75,5 +75,43 @@ class VoteController extends AdminController{
 		
 	}
 	
+	public function edit(){
+		
+		$id = I('get.id',0);
+		if(IS_GET){
+		
+			$result = apiCall("Admin/Vote/getInfo",array(array('id'=>$id)));
+				
+			if(!$result['status']){
+				$this->error($result['info']);
+			}
+			$this->assign("vo",$result['info']);
+			$this->display();
+
+		}else{
+			$id = I('post.id',0);
+			
+			$enddatetime = I('post.enddatetime',time(),'strtotime');
+			$vote_name = I('post.vote_name','');
+			
+			$entity = array(
+				'vote_name'=>$vote_name,
+				'endtime'=>$enddatetime,
+				'text'=>'',
+			);
+			
+			
+			$result = apiCall("Admin/Vote/saveByID",array($id,$entity));
+			if(!$result['status']){
+				$this->error($result['info']);
+			}
+			$this->success("保存成功",U('Admin/Vote/index'));
+			
+		}
+		
+		
+	}
+	
+	
 }
 

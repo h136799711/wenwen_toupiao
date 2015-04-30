@@ -5,13 +5,13 @@
 // | Author: 贝贝 <hebiduhebi@163.com>
 // | Copyright (c) 2013-2016, http://www.itboye.com. All Rights Reserved.
 // |-----------------------------------------------------------------------------------
+namespace Weixin\Api;
+use \Common\Api\Api;
+use \Common\Model\VoteOptionResultModel;
 
-
-namespace Common\Model;
-use Think\Model;
-
-class VoteOptionResultModel extends Model{
-	protected $_auto = array(		
-		array('vote_time', NOW_TIME, self::MODEL_INSERT), 
-	);
+class VoteOptionResultApi extends Api{
+	protected function _init(){
+		$this->model = new VoteOptionResultModel();
+	}
 }
+
