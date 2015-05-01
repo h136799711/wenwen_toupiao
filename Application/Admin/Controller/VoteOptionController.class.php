@@ -17,17 +17,21 @@ class VoteOptionController extends AdminController{
 	}
 	
 	public function index(){
-		
+		$name = I('post.name','');
 		$vote_id = I('get.vote_id',0);
 		$map = array();
 		$map['vote_id'] = $vote_id;
-		$page = array('curpage'=>I('get.p',0),'size'=>C('LIST_ROW'));
+		if(!empty($name)){
+			$map['option_name'] = array('like','%'.$name.'%');
+		}
+		$page = array('curpage'=>I('get.p',0),'size'=>C('LIST_ROWS'));
 		$order = " createtime desc ";
 		$result = apiCall("Admin/VoteOption/query",array($map,$page,$order));
 		if(!$result['status']){
 			$this->error($result['info']);
 		}
 		
+		$this->assign("name",$name);
 		$this->assign("list",$result['info']['list']);
 		$this->assign("show",$result['info']['show']);
 		$this->display();
@@ -65,7 +69,7 @@ class VoteOptionController extends AdminController{
 		$id = I('get.id',0);
 		
 		
-		$result = apiCall("Admin/Vote/delete",array(array('id'=>$id)));
+		$result = apiCall("Admin/VoteOption/delete",array(array('id'=>$id)));
 		
 		if(!$result['status']){
 			$this->error($result['info']);
