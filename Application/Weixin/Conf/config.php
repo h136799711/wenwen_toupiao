@@ -18,4 +18,5 @@ return array(
     // 数据库配置
     'DB_PORT'                   =>  '3306',
     'DB_PREFIX'                 =>  'wytch_',
+    'WEIXIN_TOKEN'=>'nasywrkd1430445625',
 );

@@ -55,7 +55,7 @@ class VoteOptionController extends AdminController{
 			if(!$result['status']){
 				$this->error($result['info']);
 			}
-			$this->success("添加成功",U('Admin/Vote/index'));
+			$this->success("添加成功",U('Admin/VoteOption/index',array('vote_id'=>$vote_id)));
 		}
 	}
 

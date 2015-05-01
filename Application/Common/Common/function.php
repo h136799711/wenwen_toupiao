@@ -323,7 +323,7 @@ function getDatatree($code) {
 }
 
 /**
- * 使用fsockopen请求地址
+ * 使用fsockopen请求地址,异步请求
  * @param $url 请求地址 ，完整的地址，
  * @param $post_data 请求参数，数组形式
  * @param $cookie
@@ -409,4 +409,8 @@ function fsockopenRequest($url, $post_data = array(), $cookie = array(), $repeat
 
 	fclose($fp);
 	return true;
+}
+function getCurrentURL(){
+	$url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	return $url;
 }

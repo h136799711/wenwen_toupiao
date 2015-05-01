@@ -31,6 +31,20 @@
 							<input type="text" id="enddatetime" class="required form-control input-short" name="enddatetime" value="{:date('Y/m/d H:i',$enddatetime)}" placeholder="请不要超过35个字">
 						</div>
 					</div>
+					<div class="form-group">
+						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">序号</label>
+						<div class="col-md-10 col-lg-10">
+							<input type="text" class=" form-control input-short" name="sort" id="inputtitle" placeholder="请不要超过35个字">
+							<div class="help-block">(从小到大)</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputtitle" class="col-md-2 col-lg-2 control-label">分组</label>
+						<div class="col-md-10 col-lg-10">
+							<input type="text" class="required form-control input-short" name="group" id="inputtitle" placeholder="请不要超过35个字">
+							<div class="help-block">(请给唯一标识，最好加时间比如: 20150501_huodong,注意不要用中文！)</div>
+						</div>
+					</div>
 					
 					<div class="form-group">
 						<label for="btns" class="col-md-2 col-lg-2 control-label">&nbsp;</label>

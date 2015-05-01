@@ -43,13 +43,13 @@
 					<thead>
 						<tr>
 							<th>
-								<input type="checkbox" class="selectall" onclick="myUtils.selectall(this,'.selectitem');" />
+								<input type="checkbox" class="selectall" onclick="myUtils.selectall(this,'.selectitem');" />序号
 							</th>
 							<th>
 								投票名称
 							</th>
 							<th>
-								投票人数
+								分组
 							</th>
 							<th>
 								状态
@@ -68,17 +68,19 @@
 							<volist name="list" id="vo">
 								<tr>
 									<td>
-										<input type="checkbox" value="{$vo.id}" name="ids[]" class="selectitem" /></td>
+										<input type="checkbox" value="{$vo.id}" name="ids[]" class="selectitem" />{$vo.sort}</td>
 									
 									<td>
 										{$vo.vote_name}
 									</td>
-									<td>0
+									<td>{$vo.group}
 									</td>
 									<td>
 										{:(time() - $vo['endtime'] < 0 ? "进行中":"已结束")}
 									</td>
 									<td>
+										<a href="{:U('Weixin/Vote/index',array('group'=>$vo['group']))}" target="_blank" class="btn btn-sm btn-primary">查看地址</a>
+										
 										<a href="{:U('Admin/VoteOption/index',array('vote_id'=>$vo['id']))}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i>添加选项</a>
 										<a href="{:U('Admin/Vote/edit',array('id'=>$vo['id']))}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i>编辑</a>
 										<a href="{:U('Admin/Vote/delete',array('id'=>$vo['id']))}" class="ajax-get confirm btn btn-sm btn-danger"><i class="fa fa-trash"></i>删除</a>

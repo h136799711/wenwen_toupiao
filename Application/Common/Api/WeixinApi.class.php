@@ -276,7 +276,11 @@ class WeixinApi {
 	 */
 	public function getOAuth2AccessToken($code) {
 		$url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" . $this -> appid . "&secret=" . $this -> appsecret . "&code=" . $code . "&grant_type=authorization_code";
-		$arr = json_decode($this -> curlGet($url), true);
+//		dump($url);
+		$result = $this -> curlGet($url);
+//		dump($result);
+//		exit();
+		$arr = json_decode($result, true);
 		return $arr;
 	}
 

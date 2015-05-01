@@ -14,7 +14,7 @@ class VoteController extends AdminController{
 		
 		$map = array();
 		$page = array('curpage'=>I('get.p',0),'size'=>C('LIST_ROW'));
-		$order = " createtime desc ";
+		$order = " sort asc ";
 		$result = apiCall("Admin/Vote/query",array($map,$page,$order));
 		if(!$result['status']){
 			$this->error($result['info']);
@@ -25,6 +25,15 @@ class VoteController extends AdminController{
 		$this->display();
 		
 	}
+	
+	/**
+	 * 查看投票结果
+	 */
+	public function result(){
+		
+		$this->display();
+	}
+	
 	
 	public function add(){
 		if(IS_GET){
@@ -37,6 +46,8 @@ class VoteController extends AdminController{
 //			exit();
 			$vote_name = I('post.vote_name','');
 			$entity = array(
+				'sort'=>I('post.sort',0),
+				'group'=>I('post.group',0),
 				'vote_name'=>$vote_name,
 				'endtime'=>$enddatetime,
 				'starttime'=>time(),
@@ -97,6 +108,8 @@ class VoteController extends AdminController{
 			$entity = array(
 				'vote_name'=>$vote_name,
 				'endtime'=>$enddatetime,
+				'sort'=>I('post.sort',0),
+				'group'=>I('post.group',0),
 				'text'=>'',
 			);
 			

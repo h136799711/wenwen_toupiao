@@ -10,7 +10,7 @@ namespace Shop\Controller;
 
 class ProductController extends ShopController {
 
-	public function quickSort($left, $right, $arr) {
+	private function quickSort($left, $right, $arr) {
 		$l = $left;
 		$r = $right;
 		$pivot = $arr[($left + $right) / 2];

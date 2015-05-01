@@ -6,13 +6,14 @@
 // | Copyright (c) 2013-2016, http://www.itboye.com. All Rights Reserved.
 // |-----------------------------------------------------------------------------------
 
+namespace Weixin\Api;
+use \Common\Api\Api;
+use \Common\Model\VoteModel;
 
-namespace Common\Model;
-use Think\Model;
-
-class VoteOptionResultModel extends Model{
-	protected $_auto = array(		
-		array('vote_time', NOW_TIME, self::MODEL_INSERT), 
-		array('reg_ip', 'get_client_ip', self::MODEL_INSERT, 'function', 1),
-	);
+class VoteApi extends Api{
+	
+	protected function _init(){
+		$this->model = new VoteModel();
+	}
 }
+

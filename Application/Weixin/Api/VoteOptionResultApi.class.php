@@ -13,5 +13,24 @@ class VoteOptionResultApi extends Api{
 	protected function _init(){
 		$this->model = new VoteOptionResultModel();
 	}
+	
+	
+	
+	/**
+	 * 各选项投票人数统计
+	 */
+	public function voteCount($option_ids){
+		$map = array();
+		
+		$map['option_id'] = array('in',$option_ids);
+		$result = $this->model->field("option_id,vote_id ,count(real_ip) as cnt")->where($map)->group("option_id,vote_id")->order(' cnt desc')->select();
+		
+		if($result === false){
+			return $this->apiReturnErr($this->model->getDbError());
+		}
+		
+		return $this->apiReturnSuc($result);
+		
+	}
 }
 
