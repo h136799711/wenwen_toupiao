@@ -108,10 +108,8 @@
 		<div class="vote-page"> 
 			<volist name="sortArr"   id="vo">
 				<div class="vote <eq name="resultArr[$vo]['is_end']" value="1">end</eq>">
-					<div class="end-tip">
-						
-					</div>
-				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']}</div>
+				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">收起</a></div>
+				<div class="js_options{$key}">
 				<volist name="resultArr[$vo]['_options']"  id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
 						<div class="option-desc am-cf">
@@ -135,6 +133,7 @@
 					</div>
 				</volist>
 				</div>
+				</div>
 			</volist>
 		</div>
 		
@@ -151,6 +150,16 @@
 	$(function(){
 		//
 		$("img.lazy").lazyload({effect : 'fadeIn'});
+		$(".js_toggle").click(function(ev){
+			var toggle = $(ev.target).attr("data-toggle");
+			if($("."+toggle).is(":hidden")){
+				$(ev.target).text("收起");
+				$("."+toggle).show();
+			}else{
+				$(ev.target).text("展开");
+				$("."+toggle).hide();
+			}
+		});
 //		$("img.show-big-pic").on("tap",function(ev){
 //			console.log(this);
 //			var src = $(ev.target).attr("data-original");
