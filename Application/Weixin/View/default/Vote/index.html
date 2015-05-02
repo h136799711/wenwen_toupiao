@@ -132,7 +132,7 @@
      	 <button type="button" class="js_search am-btn am-btn-primary am-btn-sm" >查找宝贝</button>
       </div>
       <div class="am-form-group">
-     	 <a href="{:U('Weixin/Vote/result',array('group'=>I('get.group','')))}"  class="am-btn am-btn-danger am-topbar-btn am-btn-sm">查看投票结果</a>
+     	 <a href="{:U('Weixin/Vote/result',array('group'=>I('get.group','')))}"  class="am-btn am-btn-danger am-topbar-btn am-btn-sm">查看结果</a>
       </div>
     </form>
 
@@ -140,16 +140,17 @@
 
   </div>
 </header>
+	<!--<div class="am-text-xs">当前ID: {$userinfo['real_ip']}</div>-->
 	<div class="am-text-center"><img class="lazy am-responsive-width" src="__CDN__/common/loading.gif" data-original="__IMG__/vote/banner.jpg" /></div>
 
 
-	<div class="am-text-warning am-text-xs am-padding-xs">注: 每人一天只能投2票</div>
+	<div class="am-text-warning am-text-xs am-padding-xs">注: 每天每人可以投每个组里的宝贝{$perUserMaxTicket}票 .</div>
 	<form class="voteform" method="post" action="__SELF__"> 
 		<input type="hidden" name="real_ip" value="{$userinfo['real_ip']}"  />
 		<div class="vote-page"> 
 			<volist name="sortArr"   id="vo">
 				<div class="vote <eq name="resultArr[$vo]['is_end']" value="1">end</eq>">
-				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">收起</a></div>
+				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">[收起]</a></div>
 				<div class="js_options{$key}">
 				<volist name="resultArr[$vo]['_options']"  id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
@@ -171,7 +172,17 @@
 							{:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%
 							</span>
 							<div>
-								<a  href="{:U('Weixin/Vote/addResult',array('vote_id'=>$vote['vote_id'],'option_id'=>$vote['option_id']))}" class="  <eq name="resultArr[$vo]['is_end']" value="1">am-disabled</eq> ajax-get am-btn am-btn-xs am-btn-block am-btn-primary">投一票</a>
+								<eq name='resultArr[$vo]._cant_vote' value="1">									
+									<a href="javascript:void(0)" class=" am-btn am-btn-xs am-btn-block am-btn-default am-disabled">已达每日限额</a>
+								<else/>
+								<eq name="vote._limit" value="1">
+									<a href="javascript:void(0)" class=" am-btn am-btn-xs am-btn-block am-btn-default am-disabled">已达每日限额</a>
+								<else/>
+									<a  href="{:U('Weixin/Vote/addResult',array('group'=>$group,'vote_id'=>$vote['vote_id'],'option_id'=>$vote['option_id']))}" class="  <eq name="resultArr[$vo]['is_end']" value="1">am-disabled</eq> ajax-get am-btn am-btn-xs am-btn-block am-btn-primary">投一票</a>
+								
+								</eq>
+								
+								</eq>
 							</div>
 						</div>
 					</div>
@@ -181,6 +192,7 @@
 			</volist>
 		</div>
 		
+		<div class="am-text-center"><img class="lazy am-responsive-width" src="__CDN__/common/loading.gif" data-original="__IMG__/vote/qrcode001.jpg" /></div>
 	</form>
 	<div id="big_picture" style="display: none;" >
 		<div class="img-wrp"></div>
@@ -197,10 +209,10 @@
 		$(".js_toggle").click(function(ev){
 			var toggle = $(ev.target).attr("data-toggle");
 			if($("."+toggle).is(":hidden")){
-				$(ev.target).text("收起");
+				$(ev.target).text("[收起]");
 				$("."+toggle).show();
 			}else{
-				$(ev.target).text("展开");
+				$(ev.target).text("[展开]");
 				$("."+toggle).hide();
 			}
 		});
@@ -250,12 +262,14 @@
 			console.log(name);
 			$(".vote-item").each(function(index,item){
 				
-				var option_name = $(item).find(".option_name").text();
+				var option_name = $(item).find(".option-name").text();
 				var baobao_bh = parseInt($(item).find(".baobao_bh").text());
-				console.log(bh,baobao_bh);
+//				console.log(bh,baobao_bh);
 				if(bh == baobao_bh){
 					$(item).removeClass("am-hide");
 				}else{
+					
+//				console.log(name,option_name);
 					if(option_name.indexOf(name) == -1){
 						$(item).addClass("am-hide");
 					}else{

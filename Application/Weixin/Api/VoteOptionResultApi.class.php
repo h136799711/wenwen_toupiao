@@ -14,7 +14,18 @@ class VoteOptionResultApi extends Api{
 		$this->model = new VoteOptionResultModel();
 	}
 	
-	
+	/**
+	 * 单人投票数
+	 * 
+	 */
+	public function myVoteCount($map){		
+		$result = $this->model->field("count(option_id) as option_cnt,vote_id ,option_id")->where($map)->group("option_id,vote_id")->order(' option_cnt desc')->select();
+		if($result === false){
+			return $this->apiReturnErr($this->model->getDbError());
+		}
+		
+		return $this->apiReturnSuc($result);
+	}
 	
 	/**
 	 * 各选项投票人数统计
