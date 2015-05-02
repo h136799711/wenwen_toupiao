@@ -124,12 +124,12 @@
   <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
     
 
-    <form class="am-topbar-form am-topbar-left am-form-inline" role="search">
+    <form class="am-topbar-form am-topbar-left am-form-inline  am-collapse am-in" role="search">
       <div class="am-form-group">
         <input type="text" class="am-form-field am-input-sm baobao_name" placeholder="输入姓名或编号">
       </div>
       <div class="am-form-group">
-     	 <button type="button" class="js_search am-btn am-btn-primary am-btn-sm" >查找宝宝</button>
+     	 <button type="button" class="js_search am-btn am-btn-primary am-btn-sm" >查找宝贝</button>
       </div>
       <div class="am-form-group">
      	 <a href="{:U('Weixin/Vote/result',array('group'=>I('get.group','')))}"  class="am-btn am-btn-danger am-topbar-btn am-btn-sm">查看投票结果</a>
@@ -140,10 +140,10 @@
 
   </div>
 </header>
+	<div class="am-text-center"><img class="lazy am-responsive-width" src="__CDN__/common/loading.gif" data-original="__IMG__/vote/banner.jpg" /></div>
+
+
 	<div class="am-text-warning am-text-xs am-padding-xs">注: 每人一天只能投2票</div>
-
-
-
 	<form class="voteform" method="post" action="__SELF__"> 
 		<input type="hidden" name="real_ip" value="{$userinfo['real_ip']}"  />
 		<div class="vote-page"> 
@@ -155,6 +155,8 @@
 					<div class="vote-item"  data-id="{$vote.option_id}" >
 						<div class="option-desc am-cf">
 							<img width="48px" height="48px" src="__CDN__/common/loading.gif" data-original="{$vote.img_url}" class="show-big-pic lazy am-fl am-img-thumbnail am-circle"  style="width:48px;height:48px;" alt="宝贝图片" />
+							
+							<div class="am-fl">编号: <span class="am-margin-right-xs baobao_bh">{$vote.option_id}</span></div>
 							<div class="option-name am-fl">{$vote.option_name}</div>
 						</div>
 						<div class="vote-progress">					
@@ -163,7 +165,7 @@
 								<div class="am-progress-bar am-progress-bar-secondary"  style="width: {:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%"></div>
 							</div>
 							<span class="vote-info">
-							编号: <span class="am-margin-right-xs baobao_bh">{$vote.option_id}</span>
+							
 							<!--第{$vote._rank}名&nbsp;&nbsp;-->
 							{$vote._vote_cnt}票&nbsp;&nbsp;&nbsp;&nbsp;
 							{:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%

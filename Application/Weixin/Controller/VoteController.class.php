@@ -164,7 +164,7 @@ class VoteController extends WeixinController{
 		
 		unset($map['group']);
 		$map['vote_id'] = array('in',$tmpArr);
-		$order =  " sort desc ";
+		$order =  " id asc ";
 		$result = apiCall("Weixin/VoteOption/queryNoPaging", array($map,$order));
 		
 		if(!$result['status']){
