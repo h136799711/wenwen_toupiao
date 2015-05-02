@@ -364,9 +364,9 @@ class VoteController extends WeixinController{
 	
 	//===PRIVATE======
 	
-	public function test(){
-		$this->display();
-	}
+//	public function test(){
+//		$this->display();
+//	}
 //	
 	
 	/**

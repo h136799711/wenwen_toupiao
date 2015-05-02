@@ -102,22 +102,37 @@
 			.am-topbar-btn{
 				margin-top: 0px;
 				margin-right: 0px;
+				font-size: 16px;
 			}
 			.am-topbar-brand {
-				height: 70px;
-				line-height: 70px;
+				height: 36px;
+				line-height: 36px;
+				font-size: 16px;
+				font-weight: bolder;
 			}
 			.am-topbar form a{
 				color:#FFFFFF;
+			}
+			.am-topbar{
+				min-height: 40px;
+			}
+			/**
+			 * 页面宽度大于400px时
+			 */
+			@media only screen and (min-width: 400px) {
+				.am-topbar-brand {
+					 font-size: 20px;
+				 }
+				 
 			}
 	</style>
 </block>
 
 <block name="area_body">
 <header class="am-topbar">
-  <h1 class="am-topbar-brand">
-    <a href="{:U('Weixin/Vote/index',array('group'=>I('get.group','')))}">魅力之星</a>
-  </h1>
+  <h6 class="am-topbar-brand am-text-xs">
+    <a href="{:U('Weixin/Vote/index',array('group'=>I('get.group','')))}" >华润万家第三届"魅力之星"万达店</a>
+  </h6>
 
   <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#doc-topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
 
@@ -152,12 +167,12 @@
 				<div class="vote <eq name="resultArr[$vo]['is_end']" value="1">end</eq>">
 				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">[收起]</a></div>
 				<div class="js_options{$key}">
-				<volist name="resultArr[$vo]['_options']"  id="vote">
+				<volist name="resultArr[$vo]['_options']"   id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
 						<div class="option-desc am-cf">
 							<img width="48px" height="48px" src="__CDN__/common/loading.gif" data-original="{$vote.img_url}" class="show-big-pic lazy am-fl am-img-thumbnail am-circle"  style="width:48px;height:48px;" alt="宝贝图片" />
 							
-							<div class="am-fl">编号: <span class="am-margin-right-xs baobao_bh">{$vote.option_id}</span></div>
+							<div class="am-fl">编号: <span class="am-margin-right-xs baobao_bh">{$i} <!--{$vote.option_id}--></span></div>
 							<div class="option-name am-fl">{$vote.option_name}</div>
 						</div>
 						<div class="vote-progress">					
