@@ -276,7 +276,7 @@ class VoteController extends WeixinController{
 	public function addResult(){
 		if(IS_POST){
 			
-			$perUserMaxTicket = 5;//每天5票同一ip
+			$perUserMaxTicket = 2;//每天5票同一ip
 			
 			$wxuser_id = $this->userinfo['id'];
 			$real_ip = $this->userinfo['real_ip'];

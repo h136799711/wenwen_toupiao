@@ -57,8 +57,9 @@
 
 		}
 		.vote-page .vote-item .option-desc img{
-			width:46px;
-			height: 46px;
+			width:48px;
+			height: 48px;
+			
 		}
 		.vote-page .vote-item .option-desc .option-name{
 			
@@ -98,11 +99,51 @@
 				left: 50%;
 				margin-left: -150px;
 			}
+			.am-topbar-btn{
+				margin-top: 0px;
+				margin-right: 0px;
+			}
+			.am-topbar-brand {
+				height: 70px;
+				line-height: 70px;
+			}
+			.am-topbar form a{
+				color:#FFFFFF;
+			}
 	</style>
 </block>
 
 <block name="area_body">
-	<div><a href="{:U('Weixin/Vote/result',array('group'=>I('get.group','')))}" class="am-btn am-btn-xs am-btn-block am-btn-danger">查看投票结果</a></div>
+<header class="am-topbar">
+  <h1 class="am-topbar-brand">
+    <a href="{:U('Weixin/Vote/index',array('group'=>I('get.group','')))}">魅力之星</a>
+  </h1>
+
+  <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#doc-topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+
+  <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
+    
+
+    <form class="am-topbar-form am-topbar-left am-form-inline" role="search">
+      <div class="am-form-group">
+        <input type="text" class="am-form-field am-input-sm baobao_name" placeholder="输入姓名或编号">
+      </div>
+      <div class="am-form-group">
+     	 <button type="button" class="js_search am-btn am-btn-primary am-btn-sm" >查找宝宝</button>
+      </div>
+      <div class="am-form-group">
+     	 <a href="{:U('Weixin/Vote/result',array('group'=>I('get.group','')))}"  class="am-btn am-btn-danger am-topbar-btn am-btn-sm">查看投票结果</a>
+      </div>
+    </form>
+
+    </div>
+
+  </div>
+</header>
+	<div class="am-text-warning am-text-xs am-padding-xs">注: 每人一天只能投2票</div>
+
+
+
 	<form class="voteform" method="post" action="__SELF__"> 
 		<input type="hidden" name="real_ip" value="{$userinfo['real_ip']}"  />
 		<div class="vote-page"> 
@@ -113,7 +154,7 @@
 				<volist name="resultArr[$vo]['_options']"  id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
 						<div class="option-desc am-cf">
-							<img src="__CDN__/common/loading.gif" data-original="{$vote.img_url}" class="show-big-pic lazy am-fl am-img-thumbnail am-circle" alt="宝贝图片" />
+							<img width="48px" height="48px" src="__CDN__/common/loading.gif" data-original="{$vote.img_url}" class="show-big-pic lazy am-fl am-img-thumbnail am-circle"  style="width:48px;height:48px;" alt="宝贝图片" />
 							<div class="option-name am-fl">{$vote.option_name}</div>
 						</div>
 						<div class="vote-progress">					
@@ -122,6 +163,7 @@
 								<div class="am-progress-bar am-progress-bar-secondary"  style="width: {:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%"></div>
 							</div>
 							<span class="vote-info">
+							编号: <span class="am-margin-right-xs baobao_bh">{$vote.option_id}</span>
 							<!--第{$vote._rank}名&nbsp;&nbsp;-->
 							{$vote._vote_cnt}票&nbsp;&nbsp;&nbsp;&nbsp;
 							{:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%
@@ -197,6 +239,33 @@
 			$("#big_picture").css({top:top}).height($(window).height()).show("slow");
 			
 		});
+		
+		
+		$(".js_search").click(function(){
+			try{
+			var name = $(".baobao_name").val();
+			var bh = parseInt(name);
+			console.log(name);
+			$(".vote-item").each(function(index,item){
+				
+				var option_name = $(item).find(".option_name").text();
+				var baobao_bh = parseInt($(item).find(".baobao_bh").text());
+				console.log(bh,baobao_bh);
+				if(bh == baobao_bh){
+					$(item).removeClass("am-hide");
+				}else{
+					if(option_name.indexOf(name) == -1){
+						$(item).addClass("am-hide");
+					}else{
+						$(item).removeClass("am-hide");
+					}
+				}
+				
+			});
+			}catch(er){
+				console.log(er);
+			}
+		})
 		
 	})
 </script>

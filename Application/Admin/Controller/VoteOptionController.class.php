@@ -32,6 +32,7 @@ class VoteOptionController extends AdminController{
 		}
 		
 		$this->assign("name",$name);
+		$this->assign("vote_id",$vote_id);
 		$this->assign("list",$result['info']['list']);
 		$this->assign("show",$result['info']['show']);
 		$this->display();
