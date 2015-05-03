@@ -166,6 +166,7 @@
 			<volist name="sortArr"   id="vo">
 				<div class="vote <eq name="resultArr[$vo]['is_end']" value="1">end</eq>">
 				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">[收起]</a></div>
+				{$resultArr[$vo]._is_start}
 				<div class="js_options{$key}">
 				<volist name="resultArr[$vo]['_options']"   id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
@@ -187,6 +188,10 @@
 							{:number_format($vote['_vote_cnt']*100.0/$resultArr[$vo]['_total'],0)}%
 							</span>
 							<div>
+								<eq name='resultArr[$vo]._is_start' value="0">
+									<a href="javascript:void(0)" class=" am-btn am-btn-xs am-btn-block am-btn-default am-disabled counttimedata" data-counttime="{$resultArr[$vo]['_count_time']}">尚未开始,倒计时<span class="counttime"></span></a>
+								<else/>
+								
 								<eq name='resultArr[$vo]._cant_vote' value="1">									
 									<a href="javascript:void(0)" class=" am-btn am-btn-xs am-btn-block am-btn-default am-disabled">已达每日限额</a>
 								<else/>
@@ -198,6 +203,11 @@
 								</eq>
 								
 								</eq>
+								
+								
+								</eq>
+								
+								
 							</div>
 						</div>
 					</div>
@@ -218,6 +228,43 @@
 	<script type="text/javascript" src="__CDN__/amazeui-lazyload/1.9.3/amazeui.lazyload.min.js"  ></script>
 <script type="text/javascript">
 	
+	function GetRTime(t){
+
+       var d=Math.floor(t/60/60/24);
+       var h=Math.floor(t/60/60%24);
+       var m=Math.floor(t/60%60);
+       var s=Math.floor(t%60);
+       str_time = "";
+//     console.log(d,h,m,s);
+       if(d > 0){
+			str_time = str_time + d +  "天 ";
+       }
+       
+       if(! (d == 0 && h == 0)){
+       		str_time = str_time + h +  "时";
+       }
+       if(! (d == 0 && h == 0 && m == 0)){
+       		str_time = str_time + m +  "分";
+       }
+       
+       str_time = str_time + s +  "秒";
+       
+       
+      return str_time;
+       
+   	}
+	
+	function counttime(){
+		$(".counttimedata").each(function(index,item){
+			var countdata = $(item).attr("data-counttime");
+//			console.log(countdata);
+			var str_time = GetRTime(countdata);
+			 $(item).find(".counttime").text(str_time);
+			 $(item).attr("data-counttime",countdata-1);
+		});
+	}
+	
+	
 	$(function(){
 		//
 		$("img.lazy").lazyload({effect : 'fadeIn'});
@@ -231,6 +278,8 @@
 				$("."+toggle).hide();
 			}
 		});
+		setInterval(counttime,1000);
+		
 //		$("img.show-big-pic").on("tap",function(ev){
 //			console.log(this);
 //			var src = $(ev.target).attr("data-original");

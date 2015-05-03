@@ -458,6 +458,11 @@ class VoteController extends WeixinController{
 				'vote_id'=>$vote_id,
 				'group'=>$this->group,
 			);
+			
+			if($this->checkIsEnd($vote_id)){
+				$this->error("当前投票已结束！");
+			}
+			
 			if(!$this->checkMaxTicket($vote_id, $option_id, $real_ip)){
 				$this->error("感谢您的支持，请明天再来投！");
 			}
@@ -511,6 +516,34 @@ class VoteController extends WeixinController{
 //		
 //	}
 //	
+	
+	/**
+	 * 检测投票是否已结束
+	 */
+	private function checkIsEnd($vote_id){
+		$map = array(
+			'id'=>$vote_id
+		);
+		$result = apiCall("Weixin/Vote/getInfo", array($map));
+		
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		
+		if(is_null($result['info']) ){
+			return true;
+		}
+		
+		$endtime = intval($result['info']['endtime']);
+		
+		
+		if(time() - $endtime > 0){
+			return true;	
+		}
+		
+		
+		return false;
+	}
 	
 	/**
 	 * 获取单个用户，当天对每个选项的投票数情况

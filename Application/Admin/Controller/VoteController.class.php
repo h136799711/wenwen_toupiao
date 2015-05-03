@@ -37,10 +37,12 @@ class VoteController extends AdminController{
 	
 	public function add(){
 		if(IS_GET){
-			$this->assign("enddatetime",time()+2*24*3600);
+			$this->assign("startdatetime",time());
+			$this->assign("enddatetime",time()+7*24*3600);
 			$this->display();
 		}else{
 			$enddatetime = I('post.enddatetime',time(),'strtotime');
+			$startdatetime = I('post.startdatetime',time(),'strtotime');
 			
 //			dump($enddatetime);
 //			exit();
@@ -50,7 +52,7 @@ class VoteController extends AdminController{
 				'group'=>I('post.group',0),
 				'vote_name'=>$vote_name,
 				'endtime'=>$enddatetime,
-				'starttime'=>time(),
+				'starttime'=>$startdatetime,
 				'text'=>'',
 			);
 			
@@ -102,12 +104,14 @@ class VoteController extends AdminController{
 		}else{
 			$id = I('post.id',0);
 			
+			$startdatetime = I('post.startdatetime',time(),'strtotime');
 			$enddatetime = I('post.enddatetime',time(),'strtotime');
 			$vote_name = I('post.vote_name','');
 			
 			$entity = array(
 				'vote_name'=>$vote_name,
 				'endtime'=>$enddatetime,
+				'starttime'=>$startdatetime,
 				'sort'=>I('post.sort',0),
 				'group'=>I('post.group',0),
 				'text'=>'',

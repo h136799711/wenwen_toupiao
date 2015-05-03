@@ -156,7 +156,7 @@
   </div>
 </header>
 	<!--<div class="am-text-xs">当前ID: {$userinfo['real_ip']}</div>-->
-	<div class="am-text-center"><img class="lazy am-responsive-width" src="__CDN__/common/loading.gif" data-original="__IMG__/vote/banner.jpg" /></div>
+	<div class="am-text-center"><img class="lazy am-responsive-width" src="__IMG__/vote/banner.jpg" /></div>
 
 
 	<div class="am-text-warning am-text-xs am-padding-xs">注: 每天每人可以投每个组里的宝贝{$perUserMaxTicket}票 .</div>
@@ -166,7 +166,7 @@
 			<volist name="sortArr"   id="vo">
 				<div class="vote <eq name="resultArr[$vo]['is_end']" value="1">end</eq>">
 				<div class="group-name">{$key}. {$resultArr[$vo]['vote_name']} <a href="javascript:void(0)" data-toggle="js_options{$key}" class="js_toggle am-fr">[收起]</a></div>
-				{$resultArr[$vo]._is_start}
+				
 				<div class="js_options{$key}">
 				<volist name="resultArr[$vo]['_options']"   id="vote">
 					<div class="vote-item"  data-id="{$vote.option_id}" >
@@ -257,10 +257,17 @@
 	function counttime(){
 		$(".counttimedata").each(function(index,item){
 			var countdata = $(item).attr("data-counttime");
+			if(countdata == 0){
+				clearInterval(window.intervalID);
+				window.location.href = "__SELF__";
+				return ;
+			}
 //			console.log(countdata);
 			var str_time = GetRTime(countdata);
 			 $(item).find(".counttime").text(str_time);
 			 $(item).attr("data-counttime",countdata-1);
+			 
+			 
 		});
 	}
 	
@@ -278,7 +285,7 @@
 				$("."+toggle).hide();
 			}
 		});
-		setInterval(counttime,1000);
+		window.intervalID = setInterval(counttime,1000);
 		
 //		$("img.show-big-pic").on("tap",function(ev){
 //			console.log(this);
