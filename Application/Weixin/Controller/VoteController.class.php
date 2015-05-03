@@ -135,7 +135,7 @@ class VoteController extends WeixinController{
 	}
 
 	
-	public function index(){
+	public function testindex(){
 		if($this->type == 2){
 			$curUserOptionCnt =  $this->getEveryOptionVoteCnt($this->userinfo['real_ip'],$this->group);			
 		}else{
@@ -251,6 +251,141 @@ class VoteController extends WeixinController{
 		$this->display();	
 	}
 	
+	
+	
+	
+	public function index(){
+		if($this->type == 2){
+			$curUserOptionCnt =  $this->getEveryOptionVoteCnt($this->userinfo['real_ip'],$this->group);			
+		}else{
+			$curUserOptionCnt = array();
+		}
+		//
+		$group = I('group','');
+		
+		$map = array();
+		$map['group'] = $group;
+		
+		$order = "sort asc";
+		$result = apiCall("Weixin/Vote/queryNoPaging",array($map,$order));
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		
+		$result_arr = array();
+		
+		
+		$tmpArr = array();
+		$sortArr = array();
+		$currentTime = time();
+		foreach($result['info']  as $vo){
+			$entity = array(
+				'vote_name'=>$vo['vote_name'],
+				'sort'=>$vo['sort'],
+				'endtime'=>intval($vo['endtime']),
+				'starttime'=>intval($vo['starttime']),
+				'_total'=>0,//总参与人数
+				'_options'=>array(),
+				'_cant_vote'=>0,//默认可以投票
+				'_is_start'=>0,//是否已经开始,默认没有
+				'_count_time'=>0,
+			);
+			if($entity['endtime'] - $currentTime <= 0){
+				$entity['is_end'] = 1;
+			}
+			if($entity['starttime'] - $currentTime <= 0){//开始时间小于当前时间则已经开始
+				$entity['_is_start'] = 1;
+			}else{
+				$entity['_count_time'] = $entity['starttime'] - $currentTime;
+			}
+			
+			if($this->type == 1){
+				//获取单人可投票限制
+				if(!$this->checkMaxTicket($vo['id'],'',$this->userinfo['real_ip'])){
+					$entity['_cant_vote'] = 1;//不能投票
+				}
+			}
+			$sortArr[$vo['sort']] = $vo['id'];
+			$result_arr[$vo['id']] = $entity;
+			
+			array_push($tmpArr,$vo['id']);						
+		}
+		if(count($tmpArr) == 0){
+			array_push($tmpArr,-1);
+		}
+		
+		unset($map['group']);
+		$map['vote_id'] = array('in',$tmpArr);
+		$order =  " id asc ";
+		$result = apiCall("Weixin/VoteOption/queryNoPaging", array($map,$order));
+		
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		$option_ids = array();
+		foreach($result['info'] as $vo){
+			$entity = array(
+				'option_id'=>$vo['id'],
+				'option_name'=>$vo['option_name'],
+				'sort'=>$vo['sort'],
+				'img_url'=>$vo['img_url'],
+				'vote_id'=>$vo['vote_id'],
+				'_vote_cnt'=>0 , // 投票统计
+				'_rank'=>0,
+				'_limit'=>0,
+			);
+			
+			if(isset($curUserOptionCnt[$vo['id']])){
+				if(intval($curUserOptionCnt[$vo['id']]['option_cnt']) >= $this->perUserMaxTicket){
+					$entity['_limit'] = 1;
+				}
+			}
+			
+			array_push($option_ids,$vo['id']);
+			$result_arr[$vo['vote_id']]['_options'][$vo['id']] = $entity;
+		}
+		
+		if(count($option_ids) == 0){
+			array_push($option_ids,-1);
+		}
+		
+		//获取选项统计信息
+		$result = apiCall("Weixin/VoteOptionResult/voteCount", array($option_ids));
+		
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		
+		foreach($result['info'] as $key=>$vo){
+			$cnt = intval($vo['cnt']);
+			$result_arr[$vo['vote_id']]['_total'] = $result_arr[$vo['vote_id']]['_total'] + $cnt;
+			$result_arr[$vo['vote_id']]['_options'][$vo['option_id']]['_vote_cnt'] = $cnt;
+			$result_arr[$vo['vote_id']]['_options'][$vo['option_id']]['_rank'] = $key;
+		}
+		
+		ksort($sortArr,SORT_NUMERIC);
+		
+		foreach($result_arr as &$vo){
+			
+			//TODO: 对其进行排序
+			
+			$list = &$vo['_options'];
+			
+			
+		}
+		
+		$this->assign("sortArr",$sortArr);
+		$this->assign("resultArr",$result_arr);
+		$this->display();	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	private function getTop($result_arr,$lastRank) {
 		$result = array();
 		
@@ -305,7 +440,7 @@ class VoteController extends WeixinController{
 	public function addResult(){
 		if(IS_POST){
 			
-			$perUserMaxTicket = 2;//每天$perUserMaxTicket票同一ip
+//			$perUserMaxTicket = 2;//每天$perUserMaxTicket票同一ip
 			
 			$wxuser_id = $this->userinfo['id'];
 			$real_ip = $this->userinfo['real_ip'];
@@ -323,7 +458,6 @@ class VoteController extends WeixinController{
 				'vote_id'=>$vote_id,
 				'group'=>$this->group,
 			);
-			
 			if(!$this->checkMaxTicket($vote_id, $option_id, $real_ip)){
 				$this->error("感谢您的支持，请明天再来投！");
 			}
@@ -347,7 +481,6 @@ class VoteController extends WeixinController{
 //			
 //			if($perUserMaxTicket - $cnt <= 0){
 //			}
-			
 			$result = apiCall("Weixin/VoteOptionResult/add",array($entity));
 			
 			
@@ -365,7 +498,17 @@ class VoteController extends WeixinController{
 	//===PRIVATE======
 	
 //	public function test(){
-//		$this->display();
+//		$entity = array(
+//		  "wxuser_id" => (0),
+//		  "option_id" => (6),
+//		  "vote_id" => (6),
+//		  "group" => "20150503",
+//		  "group_id" => "20150503",
+//		  "real_ip" => 1943560795,
+//		);
+//		$result = apiCall("Weixin/VoteOptionResult/add",array($entity));
+//		dump($result);
+//		
 //	}
 //	
 	
@@ -405,7 +548,9 @@ class VoteController extends WeixinController{
 	 */
 	private function checkMaxTicket($vote_id,$option_id,$real_ip){
 		$map = array();
-//		$map['option_id'] = $option_id;
+		if($this->type == 2){
+			$map['option_id'] = $option_id;
+		}
 		$map['vote_id'] = $vote_id;
 		$map['real_ip'] = $real_ip;
 		$today = date("Y-m-d",time());
