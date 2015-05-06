@@ -158,17 +158,26 @@ class VoteController extends WeixinController{
 		
 		$tmpArr = array();
 		$sortArr = array();
+		$currentTime = time();
 		foreach($result['info']  as $vo){
 			$entity = array(
 				'vote_name'=>$vo['vote_name'],
 				'sort'=>$vo['sort'],
-				'endtime'=>$vo['endtime'],
+				'endtime'=>intval($vo['endtime']),
+				'starttime'=>intval($vo['starttime']),
 				'_total'=>0,//总参与人数
 				'_options'=>array(),
 				'_cant_vote'=>0,//默认可以投票
+				'_is_start'=>0,//是否已经开始,默认没有
+				'_count_time'=>0,
 			);
-			if($vo['endtime'] - time() <= 0){
+			if($entity['endtime'] - $currentTime <= 0){
 				$entity['is_end'] = 1;
+			}
+			if($entity['starttime'] - $currentTime <= 0){//开始时间小于当前时间则已经开始
+				$entity['_is_start'] = 1;
+			}else{
+				$entity['_count_time'] = $entity['starttime'] - $currentTime;
 			}
 			
 			if($this->type == 1){
@@ -448,7 +457,7 @@ class VoteController extends WeixinController{
 			$vote_id = I('get.vote_id',0,'intval');
 			
 			if($option_id == 0 || $vote_id == 0){
-				$this->error("操场失败！");
+				$this->error("操作失败！");
 			}
 			
 			$entity = array(
@@ -502,7 +511,7 @@ class VoteController extends WeixinController{
 	
 	//===PRIVATE======
 	
-//	public function test(){
+	public function test(){
 //		$entity = array(
 //		  "wxuser_id" => (0),
 //		  "option_id" => (6),
@@ -511,10 +520,11 @@ class VoteController extends WeixinController{
 //		  "group_id" => "20150503",
 //		  "real_ip" => 1943560795,
 //		);
+		dump(long2ip(3083069464));
 //		$result = apiCall("Weixin/VoteOptionResult/add",array($entity));
 //		dump($result);
-//		
-//	}
+		
+	}
 //	
 	
 	/**
