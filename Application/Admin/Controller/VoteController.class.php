@@ -14,11 +14,12 @@ class VoteController extends AdminController{
 		
 		$map = array();
 		$page = array('curpage'=>I('get.p',0),'size'=>C('LIST_ROW'));
-		$order = " sort asc ";
+		$order = "  createtime desc , sort asc ";
 		$result = apiCall("Admin/Vote/query",array($map,$page,$order));
 		if(!$result['status']){
 			$this->error($result['info']);
 		}
+		
 		
 		$this->assign("list",$result['info']['list']);
 		$this->assign("show",$result['info']['show']);

@@ -8,7 +8,7 @@
 
 namespace Weixin\Controller;
 
-class VoteController extends WeixinController{
+class VoteTestController extends WeixinController{
 	
 	private $perUserMaxTicket = 2;
 	private $group = 0;
@@ -133,6 +133,134 @@ class VoteController extends WeixinController{
 		$this->display();
 		
 	}
+
+	
+	public function testindex(){
+		if($this->type == 2){
+			$curUserOptionCnt =  $this->getEveryOptionVoteCnt($this->userinfo['real_ip'],$this->group);			
+		}else{
+			$curUserOptionCnt = array();
+		}
+		//
+		$group = I('group','');
+		
+		$map = array();
+		$map['group'] = $group;
+		
+		$order = "sort asc";
+		$result = apiCall("Weixin/Vote/queryNoPaging",array($map,$order));
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		
+		$result_arr = array();
+		
+		
+		$tmpArr = array();
+		$sortArr = array();
+		$currentTime = time();
+		foreach($result['info']  as $vo){
+			$entity = array(
+				'vote_name'=>$vo['vote_name'],
+				'sort'=>$vo['sort'],
+				'endtime'=>intval($vo['endtime']),
+				'starttime'=>intval($vo['starttime']),
+				'_total'=>0,//总参与人数
+				'_options'=>array(),
+				'_cant_vote'=>0,//默认可以投票
+				'_is_start'=>0,//是否已经开始,默认没有
+				'_count_time'=>0,
+			);
+			if($entity['endtime'] - $currentTime <= 0){
+				$entity['is_end'] = 1;
+			}
+			if($entity['starttime'] - $currentTime <= 0){//开始时间小于当前时间则已经开始
+				$entity['_is_start'] = 1;
+			}else{
+				$entity['_count_time'] = $entity['starttime'] - $currentTime;
+			}
+			
+			if($this->type == 1){
+				//获取单人可投票限制
+				if(!$this->checkMaxTicket($vo['id'],'',$this->userinfo['real_ip'])){
+					$entity['_cant_vote'] = 1;//不能投票
+				}
+			}
+			$sortArr[$vo['sort']] = $vo['id'];
+			$result_arr[$vo['id']] = $entity;
+			
+			array_push($tmpArr,$vo['id']);						
+		}
+		if(count($tmpArr) == 0){
+			array_push($tmpArr,-1);
+		}
+		
+		unset($map['group']);
+		$map['vote_id'] = array('in',$tmpArr);
+		$order =  " id asc ";
+		$result = apiCall("Weixin/VoteOption/queryNoPaging", array($map,$order));
+		
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		$option_ids = array();
+		foreach($result['info'] as $vo){
+			$entity = array(
+				'option_id'=>$vo['id'],
+				'option_name'=>$vo['option_name'],
+				'sort'=>$vo['sort'],
+				'img_url'=>$vo['img_url'],
+				'vote_id'=>$vo['vote_id'],
+				'_vote_cnt'=>0 , // 投票统计
+				'_rank'=>0,
+				'_limit'=>0,
+			);
+			
+			if(isset($curUserOptionCnt[$vo['id']])){
+				if(intval($curUserOptionCnt[$vo['id']]['option_cnt']) >= $this->perUserMaxTicket){
+					$entity['_limit'] = 1;
+				}
+			}
+			
+			array_push($option_ids,$vo['id']);
+			$result_arr[$vo['vote_id']]['_options'][$vo['id']] = $entity;
+		}
+		
+		if(count($option_ids) == 0){
+			array_push($option_ids,-1);
+		}
+		
+		//获取选项统计信息
+		$result = apiCall("Weixin/VoteOptionResult/voteCount", array($option_ids));
+		
+		if(!$result['status']){
+			$this->error($result['info']);
+		}
+		
+		foreach($result['info'] as $key=>$vo){
+			$cnt = intval($vo['cnt']);
+			$result_arr[$vo['vote_id']]['_total'] = $result_arr[$vo['vote_id']]['_total'] + $cnt;
+			$result_arr[$vo['vote_id']]['_options'][$vo['option_id']]['_vote_cnt'] = $cnt;
+			$result_arr[$vo['vote_id']]['_options'][$vo['option_id']]['_rank'] = $key;
+		}
+		
+		ksort($sortArr,SORT_NUMERIC);
+		
+		foreach($result_arr as &$vo){
+			
+			//TODO: 对其进行排序
+			
+			$list = &$vo['_options'];
+			
+			
+		}
+		
+		$this->assign("sortArr",$sortArr);
+		$this->assign("resultArr",$result_arr);
+		$this->display();	
+	}
+	
+	
 	
 	
 	public function index(){
@@ -257,7 +385,6 @@ class VoteController extends WeixinController{
 		
 		$this->assign("sortArr",$sortArr);
 		$this->assign("resultArr",$result_arr);
-//		$this->display();	
 		
 		if(is_file(MODULE_PATH."/View/default/".CONTROLLER_NAME."/index_$group.html")){
 			$this->display("index_$group");
@@ -398,7 +525,12 @@ class VoteController extends WeixinController{
 //		  "group_id" => "20150503",
 //		  "real_ip" => 1943560795,
 //		);
-		dump(long2ip(3083069464));
+//		dump(long2ip(3083069464));
+		if(is_file(MODULE_PATH."/View/default/".CONTROLLER_NAME."/index_".'20150510.html')){
+			dump("is_file");
+		}else{
+			dump("not_file");
+		}
 //		$result = apiCall("Weixin/VoteOptionResult/add",array($entity));
 //		dump($result);
 		
