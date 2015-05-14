@@ -72,7 +72,8 @@
 									<td>
 										{$vo.sort}
 									</td>
-									<td>
+									<td><a href="{:U('Admin/VoteOption/result',array('vote_id'=>$vote_id,'id'=>$vo['id']))}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i>查看投票记录</a>
+										
 										<a href="{:U('Admin/VoteOption/edit',array('id'=>$vo['id']))}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i>编辑</a>
 										<a href="{:U('Admin/VoteOption/delete',array('id'=>$vo['id']))}" class="ajax-get confirm btn btn-sm btn-danger"><i class="fa fa-trash"></i>删除</a>
 									</td>

@@ -16,26 +16,17 @@ class VoteController extends WeixinController{
 	
 	
 	protected function _initialize(){
+		exit(":( 今日暂停投票，请明日再来！");
 		parent::_initialize();
 		C('SHOW_PAGE_TRACE',false);
 		$this -> refreshWxaccount();
-//		$debug = false;
-//		if($debug){
-//			$this->getDebugUser();
-//		}else{
-//			$url = getCurrentURL();
-//			$this->getWxuser($url);
-//		}
-//		if(empty($this->userinfo)){
-//			$this->error("无法获取到用户信息！");
-//			exit();
-//		}
 		$this->getCurrentUser();
 		$this->assign("userinfo",$this->userinfo);
 		$this->perUserMaxTicket = 2;//每天$perUserMaxTicket票同一ip
 		$this->assign("perUserMaxTicket",$this->perUserMaxTicket);
 		$this->group = I('get.group',0);
 		$this->assign("group",$this->group);
+		
 	}
 	
 	
@@ -471,8 +462,9 @@ class VoteController extends WeixinController{
 		$map = array();
 		if($this->type == 2){
 			$map['option_id'] = $option_id;
+		}else{
+			$map['vote_id'] = $vote_id;
 		}
-		$map['vote_id'] = $vote_id;
 		$map['real_ip'] = $real_ip;
 		$today = date("Y-m-d",time());
 		
@@ -515,13 +507,18 @@ class VoteController extends WeixinController{
 		if(empty($token)){
 			$token = C('WEIXIN_TOKEN');
 		}
-		$result = apiCall('Weixin/Wxaccount/getInfo', array( array('token' => $token)));
-		if ($result['status'] && is_array($result['info'])) {
-			$this -> wxaccount = $result['info'];
-			$this -> wxapi = new \Common\Api\WeixinApi($this -> wxaccount['appid'], $this -> wxaccount['appsecret']);
-		} else {
-			exit("公众号信息获取失败，请重试！");
+		$wxaccount = S($token."_wxaccount");
+		if($wxaccount === false){
+			$result = apiCall('Weixin/Wxaccount/getInfo', array( array('token' => $token)));
+			if(!$result['status'] || is_null($result['info'])){
+				exit("公众号信息获取失败，请重试！");
+			}
+			$wxaccount = $result['info'];
 		}
+	
+		$this -> wxaccount = $wxaccount;
+		$this -> wxapi = new \Common\Api\WeixinApi($this -> wxaccount['appid'], $this -> wxaccount['appsecret']);
+		
 	}
 	
 }
